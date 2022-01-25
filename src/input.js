@@ -1,10 +1,22 @@
 import React from "react";
 
+import { getFetch, postFetch } from "./fetches";
+
 const Input = () => {
   const [foundCards, setFoundCards] = React.useState(null);
   const [input, setInput] = React.useState("");
   const [notFound, toggleNotFound] = React.useState(false);
   const [selectedCardIndex, setSelectedCardindex] = React.useState(null);
+
+  const [containers, setContainers] = React.useState([]);
+  const [chosenContainer, setChosenContainer] = React.useState(0);
+  const [newContainerName, setNewContainerName] = React.useState("");
+
+  React.useEffect(() => {
+    getFetch("containers").then((data) => {
+      setContainers(data);
+    });
+  }, []);
 
   let apiSpecific = (name) => {
     return `https://api.magicthegathering.io/v1/cards?name=%22${name}%22`;
@@ -18,7 +30,7 @@ const Input = () => {
       .then((r) => r.json())
       .then((data) => {
         if (data.cards.length > 0) {
-          setFoundCards(data.cards);
+          setFoundCards(data.cards.filter((c) => c.imageUrl));
           setInput("");
           setSelectedCardindex(null);
           if (notFound) {
@@ -50,8 +62,68 @@ const Input = () => {
     );
   };
 
-  const selectCard = (index) => {
-    let card = foundCards(index);
+  const newContainerForm = () => {
+    const submit = (e) => {
+      e.preventDefault();
+      postFetch("containers", { name: newContainerName }).then((data) => {
+        setContainers([...containers, data]);
+        setChosenContainer(data.id);
+        setNewContainerName("");
+      });
+    };
+
+    return (
+      <span>
+        <form onSubmit={submit}>
+          <input
+            type="text"
+            value={newContainerName}
+            onChange={(e) => setNewContainerName(e.target.value)}
+          />
+          <input type="submit" value="Create New Container" />
+        </form>
+      </span>
+    );
+  };
+
+  const renderContainers = () => {
+    let array = containers.map((c) => {
+      return <option value={c.id}>{c.name}</option>;
+    });
+    return (
+      <span>
+        <select
+          name="containers"
+          id="containers"
+          value={chosenContainer}
+          onChange={(e) => setChosenContainer(e.target.value)}
+        >
+          <option value="0">Please Select/Create a Container</option>
+          {array}
+        </select>
+      </span>
+    );
+  };
+
+  const addCard = () => {
+    const renderClick = () => {
+      postFetch("cards", {
+        img: foundCards[selectedCardIndex].imageUrl,
+        container_id: chosenContainer,
+      }).then((data) => {
+        setFoundCards(null);
+        setInput("");
+        setSelectedCardindex(null);
+      });
+    };
+
+    if (selectedCardIndex !== null) {
+      return (
+        <span>
+          <button onClick={renderClick}>Add Card</button>
+        </span>
+      );
+    }
   };
 
   const display = () => {
@@ -60,26 +132,24 @@ const Input = () => {
     };
 
     if (foundCards) {
-      return foundCards
-        .filter((c) => c.imageUrl)
-        .map((c, i) => {
-          let style = {
-            width: "200px",
-            height: "280px",
-            boxSizing: "border-box",
-          };
-          if (selectedCardIndex === i) {
-            style.border = "4px solid lawngreen";
-          }
-          return (
-            <img
-              src={c.imageUrl}
-              alt={c.name}
-              style={style}
-              onClick={() => setSelectedCardindex(i)}
-            />
-          );
-        });
+      return [...foundCards].map((c, i) => {
+        let style = {
+          width: "200px",
+          height: "280px",
+          boxSizing: "border-box",
+        };
+        if (selectedCardIndex === i) {
+          style.border = "4px solid lawngreen";
+        }
+        return (
+          <img
+            src={c.imageUrl}
+            alt={c.name}
+            style={style}
+            onClick={() => setSelectedCardindex(i)}
+          />
+        );
+      });
     }
     if (notFound) {
       return (
@@ -97,8 +167,11 @@ const Input = () => {
 
   return (
     <section>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>{display()}</div>
       {form()}
+      {renderContainers()}
+      {parseInt(chosenContainer) === 0 && newContainerForm()}
+      {parseInt(chosenContainer) !== 0 && addCard()}
+      <div style={{ display: "flex", flexWrap: "wrap" }}>{display()}</div>
     </section>
   );
 };
