@@ -1,6 +1,7 @@
 import React from "react";
 
 import Nav from "./nav";
+import View from "./view";
 import Input from "./input";
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const content = () => {
     if (tab === "input") {
       return <Input />;
+    } else if (tab === "view") {
+      return <View />;
     }
   };
 
