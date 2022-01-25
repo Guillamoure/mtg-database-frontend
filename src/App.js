@@ -13,7 +13,7 @@ const App = () => {
   };
 
   return (
-    <main>
+    <main style={{ display: "flex" }}>
       <Nav tab={tab} setTab={setTab} />
       {content()}
     </main>
