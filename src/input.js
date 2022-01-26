@@ -107,9 +107,13 @@ const Input = () => {
 
   const addCard = () => {
     const renderClick = () => {
+      let card = foundCards[selectedCardIndex];
       postFetch("cards", {
-        img: foundCards[selectedCardIndex].imageUrl,
+        img: card.imageUrl,
         container_id: chosenContainer,
+        name: card.name,
+        text: card.text,
+        color_identity: card.colorIdentity.join(""),
       }).then((data) => {
         setFoundCards(null);
         setInput("");

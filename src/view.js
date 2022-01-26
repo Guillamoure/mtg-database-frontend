@@ -1,6 +1,6 @@
 import React from "react";
 
-import { getFetch } from "./fetches";
+import { getFetch, patchFetch } from "./fetches";
 
 const View = () => {
   const [containers, setContainers] = React.useState([]);
@@ -39,10 +39,39 @@ const View = () => {
       array = array.filter((c) => c.container_id === viewStatus);
     }
     return array.map((c) => {
+      let renderChange = (e) => {
+        let container_id = e.target.value;
+        patchFetch(`cards/${c.id}`, { container_id }).then((data) => {
+          let cardsDupe = [...cards].map((card) => {
+            if (card.id !== data.id) {
+              return card;
+            } else {
+              return data;
+            }
+          });
+          setCards(cardsDupe);
+        });
+      };
+
+      let array = containers.map((con) => {
+        return <option value={con.id}>{con.name}</option>;
+      });
+
+      let location = (
+        <select
+          name="containers"
+          id="containers"
+          value={c.container_id}
+          onChange={renderChange}
+        >
+          {array}
+        </select>
+      );
+
       return (
         <div
           style={{
-            width: "200px",
+            width: "204px",
             height: "320px",
             boxSizing: "border-box",
             border: "2px solid black",
@@ -57,7 +86,7 @@ const View = () => {
               height: "280px",
             }}
           />
-          Location: {containers.find((con) => con.id === c.container_id).name}
+          Location: {location}
         </div>
       );
     });
