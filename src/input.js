@@ -12,6 +12,9 @@ const Input = () => {
   const [chosenContainer, setChosenContainer] = React.useState(0);
   const [newContainerName, setNewContainerName] = React.useState("");
 
+  const searchRef = React.useRef(null);
+  const submitRef = React.useRef(null);
+
   React.useEffect(() => {
     getFetch("containers").then((data) => {
       setContainers(data);
@@ -53,9 +56,12 @@ const Input = () => {
     return (
       <form onSubmit={submit}>
         <input
+          id="search-mtg"
+          name="search-mtg"
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          ref={searchRef}
         />
         <input type="submit" value="search" />
       </form>
@@ -110,6 +116,9 @@ const Input = () => {
 
   const addCard = () => {
     const renderClick = () => {
+      if (selectedCardIndex === null) {
+        return;
+      }
       let card = foundCards[selectedCardIndex];
       postFetch("cards", {
         img: card.imageUrl,
@@ -121,16 +130,17 @@ const Input = () => {
         setFoundCards(null);
         setInput("");
         setSelectedCardindex(null);
+        searchRef.current.focus();
       });
     };
 
-    if (selectedCardIndex !== null) {
-      return (
-        <span>
-          <button onClick={renderClick}>Add Card</button>
-        </span>
-      );
-    }
+    return (
+      <span>
+        <button onClick={renderClick} ref={submitRef}>
+          Add Card
+        </button>
+      </span>
+    );
   };
 
   const display = () => {
@@ -148,12 +158,16 @@ const Input = () => {
         if (selectedCardIndex === i) {
           style.border = "4px solid lawngreen";
         }
+        const onClickImage = () => {
+          setSelectedCardindex(i);
+          submitRef.current.focus();
+        };
         return (
           <img
             src={c.imageUrl}
             alt={c.name}
             style={style}
-            onClick={() => setSelectedCardindex(i)}
+            onClick={onClickImage}
           />
         );
       });
