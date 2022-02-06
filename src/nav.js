@@ -11,7 +11,7 @@ const Nav = ({ tab, setTab }) => {
       style={{
         width: "5vw",
         color: "white",
-        backgroundColor: "black",
+        backgroundColor: "purple",
         listStyle: "none",
         minHeight: "100vh",
         padding: "5px",

@@ -64,10 +64,10 @@ const Input = () => {
 
   const newContainerForm = () => {
     const submit = (e) => {
+      e.preventDefault();
       if (newContainerName === "") {
         return;
       }
-      e.preventDefault();
       postFetch("containers", { name: newContainerName }).then((data) => {
         setContainers([...containers, data]);
         setChosenContainer(data.id);
