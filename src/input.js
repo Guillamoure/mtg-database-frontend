@@ -116,7 +116,7 @@ const Input = () => {
         container_id: chosenContainer,
         name: card.name,
         text: card.text,
-        color_identity: card.colorIdentity.join(""),
+        color_identity: card.colorIdentity?.join("") ? "A",
       }).then((data) => {
         setFoundCards(null);
         setInput("");
