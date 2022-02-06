@@ -64,6 +64,9 @@ const Input = () => {
 
   const newContainerForm = () => {
     const submit = (e) => {
+      if (newContainerName === "") {
+        return;
+      }
       e.preventDefault();
       postFetch("containers", { name: newContainerName }).then((data) => {
         setContainers([...containers, data]);
