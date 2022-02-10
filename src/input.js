@@ -50,7 +50,11 @@ const Input = () => {
   const form = () => {
     const submit = (e) => {
       e.preventDefault();
-      search(apiSpecific(input));
+      if (input.includes("'")) {
+        search(apiWide(input));
+      } else {
+        search(apiSpecific(input));
+      }
     };
 
     return (
@@ -159,8 +163,8 @@ const Input = () => {
           style.border = "4px solid lawngreen";
         }
         if (window.innerWidth > 1440) {
-          style.width = "9vw";
-          style.height = "12.6vw";
+          style.width = "12vw";
+          style.height = "16.8vw";
         }
         const onClickImage = () => {
           setSelectedCardindex(i);
