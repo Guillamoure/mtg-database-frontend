@@ -8,8 +8,8 @@ const Nav = ({ tab, setTab }) => {
   };
   return (
     <ul
+      id="nav"
       style={{
-        width: "5vw",
         color: "white",
         backgroundColor: "purple",
         listStyle: "none",

@@ -3,6 +3,7 @@ import React from "react";
 import Nav from "./nav";
 import View from "./view";
 import Input from "./input";
+import "./App.css";
 
 const App = () => {
   const [tab, setTab] = React.useState("view");

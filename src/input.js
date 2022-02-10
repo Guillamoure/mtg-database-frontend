@@ -158,6 +158,10 @@ const Input = () => {
         if (selectedCardIndex === i) {
           style.border = "4px solid lawngreen";
         }
+        if (window.innerWidth > 1440) {
+          style.width = "9vw";
+          style.height = "12.6vw";
+        }
         const onClickImage = () => {
           setSelectedCardindex(i);
           submitRef.current.focus();
@@ -187,7 +191,7 @@ const Input = () => {
   };
 
   return (
-    <section>
+    <section id="input">
       {form()}
       {renderContainers()}
       {parseInt(chosenContainer) === 0 && newContainerForm()}

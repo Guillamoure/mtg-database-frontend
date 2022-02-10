@@ -1,4 +1,5 @@
 import React from "react";
+import Card from "./card";
 
 import { getFetch, patchFetch } from "./fetches";
 
@@ -6,6 +7,7 @@ const View = () => {
   const [containers, setContainers] = React.useState([]);
   const [cards, setCards] = React.useState([]);
   const [viewStatus, setViewStatus] = React.useState(0);
+  const [viewCard, setViewCard] = React.useState(null);
 
   React.useEffect(() => {
     getFetch("containers").then((data) => {
@@ -85,6 +87,7 @@ const View = () => {
               width: "200px",
               height: "280px",
             }}
+            onClick={() => examine(c)}
           />
           Location: {location}
         </div>
@@ -92,12 +95,17 @@ const View = () => {
     });
   };
 
+  const examine = (card) => {
+    setViewCard(card);
+  };
+
   return (
-    <section>
+    <section id="view">
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {renderContainers()}
       </div>
       <div style={{ display: "flex", flexWrap: "wrap" }}>{renderCards()}</div>
+      {viewCard && <Card card={viewCard} setViewCard={setViewCard} />}
     </section>
   );
 };
