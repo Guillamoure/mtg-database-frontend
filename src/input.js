@@ -5,6 +5,7 @@ import { getFetch, postFetch } from "./fetches";
 const Input = () => {
   const [foundCards, setFoundCards] = React.useState(null);
   const [input, setInput] = React.useState("");
+  const [customArtworkUrl, setCustomArtworkUrl] = React.useState("");
   const [notFound, toggleNotFound] = React.useState(false);
   const [selectedCardIndex, setSelectedCardindex] = React.useState(null);
 
@@ -119,32 +120,33 @@ const Input = () => {
   };
 
   const addCard = () => {
-    const renderClick = () => {
-      if (selectedCardIndex === null) {
-        return;
-      }
-      let card = foundCards[selectedCardIndex];
-      postFetch("cards", {
-        img: card.imageUrl,
-        container_id: chosenContainer,
-        name: card.name,
-        text: card.text,
-        color_identity: card.colorIdentity?.join("") ?? "A",
-      }).then((data) => {
-        setFoundCards(null);
-        setInput("");
-        setSelectedCardindex(null);
-        searchRef.current.focus();
-      });
-    };
-
     return (
       <span>
-        <button onClick={renderClick} ref={submitRef}>
+        <button onClick={addCardSubmit} ref={submitRef}>
           Add Card
         </button>
       </span>
     );
+  };
+
+  const addCardSubmit = (useCustomArtwork = false) => {
+    if (selectedCardIndex === null) {
+      return;
+    }
+    let img = useCustomArtwork ? customArtworkUrl : card.imageUrl;
+    let card = foundCards[selectedCardIndex];
+    postFetch("cards", {
+      img,
+      container_id: chosenContainer,
+      name: card.name,
+      text: card.text,
+      color_identity: card.colorIdentity?.join("") ?? "A",
+    }).then((data) => {
+      setFoundCards(null);
+      setInput("");
+      setSelectedCardindex(null);
+      searchRef.current.focus();
+    });
   };
 
   const display = () => {
@@ -194,6 +196,33 @@ const Input = () => {
     }
   };
 
+  const customArtwork = () => {
+    if (foundCards) {
+      return (
+        <div>
+          <p>
+            Not the artwork you're looking for? Enter a url here!
+            <br />
+            <em>
+              Make sure you select one of the cards above so the rest of the
+              data is valid!
+            </em>
+          </p>
+          <input
+            id="custom-artwork"
+            name="custom-artwork"
+            type="text"
+            value={customArtworkUrl}
+            onChange={(e) => setCustomArtworkUrl(e.target.value)}
+          />
+          <button onClick={() => addCardSubmit(true)}>
+            Submit with Artwork URL
+          </button>
+        </div>
+      );
+    }
+  };
+
   return (
     <section id="input">
       {form()}
@@ -201,6 +230,7 @@ const Input = () => {
       {parseInt(chosenContainer) === 0 && newContainerForm()}
       {parseInt(chosenContainer) !== 0 && addCard()}
       <div style={{ display: "flex", flexWrap: "wrap" }}>{display()}</div>
+      {customArtwork()}
     </section>
   );
 };
