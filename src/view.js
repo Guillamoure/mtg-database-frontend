@@ -3,6 +3,7 @@ import Card from "./card";
 import Container from "./container";
 
 import { getFetch, patchFetch } from "./fetches";
+import { updateCardData } from "./sideEffects";
 
 const View = () => {
   const [containers, setContainers] = React.useState([]);
@@ -17,6 +18,7 @@ const View = () => {
     });
     getFetch("cards").then((data) => {
       setCards(data);
+      updateCardData(data);
     });
   }, []);
 
