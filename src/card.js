@@ -1,10 +1,11 @@
 import React from "react";
 import { deleteFetch } from "./fetches";
 
-const Card = ({ card, setViewCard }) => {
+const Card = ({ card, setViewCard, filterOutCardFromCards }) => {
   const deleteCard = () => {
     deleteFetch(`cards/${card.id}`).then((data) => {
       setViewCard(null);
+      filterOutCardFromCards(card.id);
     });
   };
 

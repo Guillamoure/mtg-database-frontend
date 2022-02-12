@@ -99,13 +99,26 @@ const View = () => {
     setViewCard(card);
   };
 
+  const filterOutCardFromCards = (id) => {
+    let cardsDupe = [...cards].filter((c) => {
+      return c.id !== id;
+    });
+    setCards(cardsDupe);
+  };
+
   return (
     <section id="view">
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {renderContainers()}
       </div>
       <div style={{ display: "flex", flexWrap: "wrap" }}>{renderCards()}</div>
-      {viewCard && <Card card={viewCard} setViewCard={setViewCard} />}
+      {viewCard && (
+        <Card
+          card={viewCard}
+          setViewCard={setViewCard}
+          filterOutCardFromCards={filterOutCardFromCards}
+        />
+      )}
     </section>
   );
 };

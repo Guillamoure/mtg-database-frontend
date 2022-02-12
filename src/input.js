@@ -15,6 +15,7 @@ const Input = () => {
 
   const searchRef = React.useRef(null);
   const submitRef = React.useRef(null);
+  const containerRef = React.useRef(null);
 
   React.useEffect(() => {
     getFetch("containers").then((data) => {
@@ -58,6 +59,14 @@ const Input = () => {
       }
     };
 
+    const formOnChange = (e) => {
+      if (parseInt(e.target.value) < 10) {
+        return;
+      } else {
+        setInput(e.target.value);
+      }
+    };
+
     return (
       <form onSubmit={submit}>
         <input
@@ -65,7 +74,7 @@ const Input = () => {
           name="search-mtg"
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={formOnChange}
           ref={searchRef}
         />
         <input type="submit" value="search" />
@@ -122,7 +131,7 @@ const Input = () => {
   const addCard = () => {
     return (
       <span>
-        <button onClick={addCardSubmit} ref={submitRef}>
+        <button onClick={() => addCardSubmit()} ref={submitRef}>
           Add Card
         </button>
       </span>
@@ -133,8 +142,8 @@ const Input = () => {
     if (selectedCardIndex === null) {
       return;
     }
-    let img = useCustomArtwork ? customArtworkUrl : card.imageUrl;
     let card = foundCards[selectedCardIndex];
+    let img = useCustomArtwork ? customArtworkUrl : card.imageUrl;
     postFetch("cards", {
       img,
       container_id: chosenContainer,
@@ -146,6 +155,7 @@ const Input = () => {
       setInput("");
       setSelectedCardindex(null);
       searchRef.current.focus();
+      setCustomArtworkUrl("");
     });
   };
 
@@ -172,13 +182,33 @@ const Input = () => {
           setSelectedCardindex(i);
           submitRef.current.focus();
         };
+        let num = i < 10 ? i : null;
         return (
-          <img
-            src={c.imageUrl}
-            alt={c.name}
-            style={style}
-            onClick={onClickImage}
-          />
+          <div
+            style={{
+              position: "relative",
+              textAlign: "center",
+              color: "white",
+              fontSize: "40px",
+            }}
+          >
+            <img
+              src={c.imageUrl}
+              alt={c.name}
+              style={style}
+              onClick={onClickImage}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "50%",
+                left: "50%",
+                textShadow: "2px 2px black",
+              }}
+            >
+              {num}
+            </div>
+          </div>
         );
       });
     }
@@ -223,8 +253,17 @@ const Input = () => {
     }
   };
 
+  const selectByIndex = (e) => {
+    if (foundCards) {
+      if (parseInt(e.key) < 10) {
+        setSelectedCardindex(parseInt(e.key));
+        submitRef.current.focus();
+      }
+    }
+  };
+
   return (
-    <section id="input">
+    <section id="input" onKeyPress={selectByIndex}>
       {form()}
       {renderContainers()}
       {parseInt(chosenContainer) === 0 && newContainerForm()}
