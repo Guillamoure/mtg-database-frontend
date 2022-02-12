@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "./card";
+import Container from "./container";
 
 import { getFetch, patchFetch } from "./fetches";
 
@@ -8,6 +9,7 @@ const View = () => {
   const [cards, setCards] = React.useState([]);
   const [viewStatus, setViewStatus] = React.useState(0);
   const [viewCard, setViewCard] = React.useState(null);
+  const [viewContainer, setViewContainer] = React.useState(null);
 
   React.useEffect(() => {
     getFetch("containers").then((data) => {
@@ -17,6 +19,16 @@ const View = () => {
       setCards(data);
     });
   }, []);
+
+  React.useEffect(() => {
+    if (containers.length) {
+      let containersDupe = [...containers].map((con) => {
+        let conCards = cards.filter((c) => c.container_id === con.id);
+        return { ...con, cards: conCards };
+      });
+      setContainers(containersDupe);
+    }
+  }, [cards]);
 
   const renderContainers = () => {
     return [{ name: "View All Cards" }, ...containers].map((c) => {
@@ -28,8 +40,10 @@ const View = () => {
             border: "1px solid black",
             padding: "auto",
           }}
+          onClick={() => setViewContainer(c)}
         >
           <strong>{c.name}</strong>
+          <div>{c.cards?.length} Cards</div>
         </div>
       );
     });
@@ -117,6 +131,12 @@ const View = () => {
           card={viewCard}
           setViewCard={setViewCard}
           filterOutCardFromCards={filterOutCardFromCards}
+        />
+      )}
+      {viewContainer && (
+        <Container
+          container={viewContainer}
+          setViewContainer={setViewContainer}
         />
       )}
     </section>

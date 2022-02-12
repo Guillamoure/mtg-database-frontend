@@ -150,6 +150,9 @@ const Input = () => {
       name: card.name,
       text: card.text,
       color_identity: card.colorIdentity?.join("") ?? "A",
+      set_name: card.setName,
+      artist: useCustomArtwork ? null : card.artist,
+      card_type: card.type,
     }).then((data) => {
       setFoundCards(null);
       setInput("");
